@@ -3,10 +3,15 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
     "fixer": "yarn lint:prettier --write && yarn lint:eslint --fix",
     "lint:eslint": "eslint \"{**/*,*}.{js,vue}\" --ignore-path .gitignore",
-    "lint:prettier": "prettier \"{**/*,*}.{js,css,vue,html}\" --list-different --ignore-path .gitignore"
+    "lint:prettier": "prettier \"{**/*,*}.{js,css,vue,html}\" --list-different --ignore-path .gitignore",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
+  "main": "background.js",
   "dependencies": {
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
@@ -18,10 +23,13 @@
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
+    "electron": "^13.0.0",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "vue-cli-plugin-electron-builder": "~2.1.1"
   }
 }
