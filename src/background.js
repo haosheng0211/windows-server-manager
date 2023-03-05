@@ -1,8 +1,9 @@
 "use strict";
 
+import { exec } from "child_process";
 import { resolve } from "path";
-import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
+import { app, BrowserWindow, ipcMain, protocol } from "electron";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -17,6 +18,8 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    resizable: false,
+    maximizable: false,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -83,3 +86,18 @@ if (isDevelopment) {
     });
   }
 }
+
+ipcMain.handle("get-login-events", () => {
+  return new Promise((resolve, reject) => {
+    exec(
+      'powershell "Get-EventLog -LogName Security | Where-Object { $_.EventID -eq 4624 -and $_.ReplacementStrings[18] -ne \'-\' } | Select-Object @{ Name = \\"created_at\\"; Expression = { Get-Date $_.TimeGenerated -Format \\"yyyy-MM-dd HH:mm:ss\\" } }, @{ Name = \\"username\\"; Expression = { $_.ReplacementStrings[5] } }, @{ Name = \\"ip_address\\"; Expression = { $_.ReplacementStrings[18] } } | ConvertTo-Json"',
+      (err, stdout) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(JSON.parse(stdout));
+        }
+      }
+    );
+  });
+});
